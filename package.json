@@ -1,0 +1,25 @@
+{
+  "name": "resto-api",
+  "version": "1.0.0",
+  "description": "aplikasi rest api resto",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/faridrusdyanto/resto-api.git"
+  },
+  "keywords": [
+    "rest",
+    "api",
+    "nodejs",
+    "expressjs"
+  ],
+  "author": "farid, eldir",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/faridrusdyanto/resto-api/issues"
+  },
+  "homepage": "https://github.com/faridrusdyanto/resto-api#readme"
+}
