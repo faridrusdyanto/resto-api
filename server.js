@@ -1,5 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+var routes = require('./routes');
+
+
 
 // var morgan = require('morgan');
 const app = express();
@@ -10,6 +13,8 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 // app.use(morgan('dev'));
 // app.use(cors());
+
+routes(app);
 
 app.listen(3030, () => {
   console.log('Server started on port 3030');
