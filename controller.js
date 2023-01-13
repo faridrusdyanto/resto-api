@@ -23,7 +23,8 @@ exports.getDataUser = function(req, res) {
 exports.addUser = function(req, res) {
   var post = {
     username: req.body.username,
-    password: passwordHash.generate(req.body.password)
+    password: passwordHash.generate(req.body.password),
+    role: req.body.role
   }
   
   var query = "SELECT username FROM ?? WHERE ??=?";
