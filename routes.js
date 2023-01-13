@@ -5,4 +5,11 @@ module.exports = function(app) {
 
   app.route('/')
     .get(jsonku.index);
+
+  app.route('/data-user')
+    .get(jsonku.getDataUser);
+
+  app.route('/add-user')
+    .post(jsonku.addUser);
 }
+
