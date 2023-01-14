@@ -2,7 +2,7 @@
 
 var response = require('./res');
 var connection = require('./connection');
-var passwordHash = require('password-hash');
+var bcrypt = require('bcrypt');
 
 exports.index = function(req, res) {
   response.ok('Aplikasi REST API Berjalan', res)
@@ -21,36 +21,42 @@ exports.getDataUser = function(req, res) {
 
 // add user
 exports.addUser = function(req, res) {
-  var post = {
-    username: req.body.username,
-    password: passwordHash.generate(req.body.password),
-    role: req.body.role
-  }
-  
-  var query = "SELECT username FROM ?? WHERE ??=?";
-  var table = ["user", "username", post.username];
 
-  query = connection.format(query, table);
-  
-  connection.query(query, function(error, rows) {
-    if(error) {
-        console.log(error);
-    } else {
-      if(rows.length == 0) {
-        var query = "INSERT INTO ?? SET ?";
-        var table = ["user"];
-        query = connection.format(query, table);
-        connection.query(query, post, function(error, rows) {
-            if(error) {
-                console.log(error);
-            } else {
-                response.ok("Berhasil menambahkan data user baru", res);
-            }
-        });
-      } else {
-          response.ok("User sudah terdaftar!", res);
+  bcrypt.genSalt(10, function(err, salt) {
+    bcrypt.hash(req.body.password, salt, function(err, hash) {
+      var post = {
+        username: req.body.username,
+        password: hash,
+        role: req.body.role
       }
-    }
+      
+      var query = "SELECT username FROM ?? WHERE ??=?";
+      var table = ["user", "username", post.username];
+    
+      query = connection.format(query, table);
+      
+      connection.query(query, function(error, rows) {
+        if(error) {
+            console.log(error);
+        } else {
+          if(rows.length == 0) {
+            var query = "INSERT INTO ?? SET ?";
+            var table = ["user"];
+            query = connection.format(query, table);
+            connection.query(query, post, function(error, rows) {
+                if(error) {
+                    console.log(error);
+                } else {
+                    response.ok("Berhasil menambahkan data user baru", res);
+                }
+            });
+          } else {
+              response.ok("User sudah terdaftar!", res);
+          }
+        }
+      })
+    })
   })
+  
 }
 
