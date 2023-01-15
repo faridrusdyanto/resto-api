@@ -5,7 +5,7 @@ var connection = require('./connection');
 var bcrypt = require('bcrypt');
 
 exports.index = function(req, res) {
-  response.ok('Aplikasi REST API Berjalan', res)
+  response.ok(res, 'Aplikasi REST API Berjalan')
 }
 
 // get all data user
@@ -14,7 +14,7 @@ exports.getDataUser = function(req, res) {
     if(error) {
       console.log(error);
     } else {
-      response.ok(rows, res)
+      response.ok(res, true, "Data Tersedia", rows)
     }
   });
 }
@@ -47,11 +47,11 @@ exports.addUser = function(req, res) {
                 if(error) {
                     console.log(error);
                 } else {
-                    response.ok("Berhasil menambahkan data user baru", res);
+                    response.ok(res, true, "Berhasil menambahkan data user baru");
                 }
             });
           } else {
-              response.ok("User sudah terdaftar!", res);
+              response.ok(res, false, "User sudah terdaftar!");
           }
         }
       })

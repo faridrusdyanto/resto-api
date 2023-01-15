@@ -46,21 +46,23 @@ exports.login = function(req, res) {
                 console.log(error);
               } else {
                 res.json({
-                  succuss: true,
-                  message: 'Token JWT tergenerate!',
-                  token: token,
-                  id_user: data.id_user,
-                  user: username,
-                  role: role
+                  success: true,
+                  message: 'Login Berhasil!',
+                  data: {
+                    id_user: data.id_user,
+                    user: username,
+                    role: role,
+                    token: token
+                  },
                 });
               }
             });
           } else {
-            res.json({"Error": true, "Message": "Password salah!"});
+            res.json({"success": false, "message": "Password salah!"});
           }
         })
       } else {
-         res.json({"Error": true, "Message": "Username tidak terdaftar!"});
+         res.json({"success": false, "message": "Username tidak terdaftar!"});
       }
     }
   })
