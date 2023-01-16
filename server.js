@@ -4,13 +4,13 @@ var routes = require('./routes');
 var morgan = require('morgan');
 
 const app = express();
-// var cors = require('cors');
+var cors = require('cors');
 
 // parse application/json
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(morgan('dev'));
-// app.use(cors());
+app.use(cors());
 
 routes(app);
 // Daftarkan menu routes dari index
