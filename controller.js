@@ -11,7 +11,7 @@ exports.index = (req, res) => {
 // get all data user
 exports.getDataUser = (req, res) => {
   connection.query("SELECT * FROM user", (error, rows, fileds) => {
-    if(error) {
+    if (error) {
       console.log(error);
     } else {
       response.ok(res, true, "Data Tersedia", rows)
@@ -29,29 +29,29 @@ exports.addUser = (req, res) => {
         password: hash,
         role: req.body.role
       }
-      
+
       let query = "SELECT username FROM ?? WHERE ??=?";
       const table = ["user", "username", post.username];
-    
+
       query = connection.format(query, table);
-      
+
       connection.query(query, (error, rows) => {
-        if(error) {
-            console.log(error);
+        if (error) {
+          console.log(error);
         } else {
-          if(rows.length == 0) {
+          if (rows.length == 0) {
             let query = "INSERT INTO ?? SET ?";
             const table = ["user"];
             query = connection.format(query, table);
             connection.query(query, post, (error, rows) => {
-                if(error) {
-                    console.log(error);
-                } else {
-                    response.ok(res, true, "Berhasil menambahkan data user baru");
-                }
+              if (error) {
+                console.log(error);
+              } else {
+                response.ok(res, true, "Berhasil menambahkan data user baru");
+              }
             });
           } else {
-              response.ok(res, false, "User sudah terdaftar!");
+            response.ok(res, false, "User sudah terdaftar!");
           }
         }
       })
@@ -63,7 +63,7 @@ exports.getDataUserById = (req, res) => {
   const id = req.params.id;
   connection.query("SELECT * FROM user WHERE id = ?", [id],
     (error, rows, fields) => {
-      if(error) {
+      if (error) {
         console.log(error);
       } else {
         if (!rows.length) {
@@ -75,3 +75,48 @@ exports.getDataUserById = (req, res) => {
     }
   );
 };
+
+exports.changePassword = (req, res) => {
+  const post = {
+    id: req.body.id,
+    oldPassword: req.body.oldPassword,
+    newPassword: req.body.newPassword
+  }
+
+  let query = "SELECT * FROM ?? WHERE ??=?";
+  const table = ["user", "id", post.id];
+
+  query = connection.format(query, table);
+  connection.query(query, (error, rows) => {
+    if (error) {
+      console.log(error);
+    } else {
+      if (rows.length == 1) {
+        bcrypt.compare(post.oldPassword, rows[0].password, (err, result) => {
+          if (result) {
+            bcrypt.genSalt(10, (err, salt) => {
+              bcrypt.hash(req.body.newPassword, salt, (err, hash) => {
+
+                let query = "UPDATE ?? SET ??=? WHERE ??=?";
+                const newPassword = ["user", "password", hash, "id", post.id];
+
+                query = connection.format(query, newPassword);
+                connection.query(query, (error, rows) => {
+                  if (error) {
+                    console.log(error);
+                  } else {
+                    response.ok(res, true, "Berhasil Merubah Password");
+                  }
+                });
+              })
+            })
+          } else {
+            response.ok(res, false, "Password Lama Tidak Sesuai");
+          }
+        })
+      } else {
+        response.ok(res, false, "User Tidak Terdaftar");
+      }
+    }
+  })
+}

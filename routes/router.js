@@ -15,5 +15,8 @@ module.exports = (app) => {
   app.route('/data-user/:id')
   .get(jsonku.getDataUserById);
 
+  app.route('/change-password')
+    .put(jsonku.changePassword);
+
 }
 
