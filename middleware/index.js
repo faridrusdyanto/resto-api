@@ -1,6 +1,6 @@
-var express = require('express');
-var auth = require('./auth');
-var router = express.Router();
+const express = require('express');
+const auth = require('./auth');
+const router = express.Router();
 // var verifikasi = require('./verifikasi');
 
 // Daftarkan menu login

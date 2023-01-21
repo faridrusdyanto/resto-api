@@ -1,14 +1,14 @@
-var mysql = require('mysql');
+const mysql = require('mysql');
 
 // buat koneksi database
 const conn = mysql.createConnection({
   host: 'localhost',
   user: 'root',
   port: 3306,
-  password: '@135790eL',
+  password: '',
   database: 'db_resto'
 });
-conn.connect(function (err) {
+conn.connect((err) => {
   if (err) {
     console.error('error connecting : ' + err.stack);
     return;

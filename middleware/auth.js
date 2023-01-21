@@ -1,22 +1,22 @@
-var connection = require('../connection');
-var mySql = require('mysql');
-var response = require('../res');
-var jwt = require('jsonwebtoken');
-var ip = require('ip');
-var bcrypt = require('bcrypt');
-var config = require('../config/secret');
+const connection = require('../connection');
+const mySql = require('mysql');
+const response = require('../res');
+const jwt = require('jsonwebtoken');
+const ip = require('ip');
+const bcrypt = require('bcrypt');
+const config = require('../config/secret');
 
-exports.login = function(req, res) {
-  var post = {
+exports.login = (req, res) => {
+  const post = {
     username: req.body.username,
     password: req.body.password
   }
   
-  var query = "SELECT * FROM ?? WHERE ??=?";
-  var table = ["user", "username", post.username];
+  let query = "SELECT * FROM ?? WHERE ??=?";
+  const table = ["user", "username", post.username];
 
   query = mySql.format(query, table);
-  connection.query(query, function(error, rows) {
+  connection.query(query, (error, rows) => {
     if(error) {
         console.log(error);
     } else {
@@ -25,23 +25,23 @@ exports.login = function(req, res) {
         username = rows[0].username;
         role = rows[0].role;
         
-        bcrypt.compare(post.password, rows[0].password, function(err, result) {
+        bcrypt.compare(post.password, rows[0].password, (err, result) => {
           if (result) {
-            var token = jwt.sign({rows}, config.secret, {
+            const token = jwt.sign({rows}, config.secret, {
               expiresIn: 28800
             });
             
-            var data = {
+            const data = {
               id_user: id_user,
               token: token,
               ip_address: ip.address()
             }
     
-            var query = "INSERT INTO ?? SET ?";
-            var table = ["access_token"];
+            let query = "INSERT INTO ?? SET ?";
+            const table = ["access_token"];
     
             query = mySql.format(query, table);
-            connection.query(query, data, function(error, rows) {
+            connection.query(query, data, (error, rows) => {
               if(error) {
                 console.log(error);
               } else {

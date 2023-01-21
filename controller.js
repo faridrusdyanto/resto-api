@@ -1,16 +1,16 @@
 'use strict';
 
-var response = require('./res');
-var connection = require('./connection');
-var bcrypt = require('bcrypt');
+const response = require('./res');
+const connection = require('./connection');
+const bcrypt = require('bcrypt');
 
-exports.index = function(req, res) {
-  response.ok(res, 'Aplikasi REST API Berjalan')
+exports.index = (req, res) => {
+  response.ok(res, true, 'Aplikasi REST API Berjalan')
 }
 
 // get all data user
-exports.getDataUser = function(req, res) {
-  connection.query("SELECT * FROM user", function(error, rows, fileds) {
+exports.getDataUser = (req, res) => {
+  connection.query("SELECT * FROM user", (error, rows, fileds) => {
     if(error) {
       console.log(error);
     } else {
@@ -20,30 +20,30 @@ exports.getDataUser = function(req, res) {
 }
 
 // add user
-exports.addUser = function(req, res) {
+exports.addUser = (req, res) => {
 
-  bcrypt.genSalt(10, function(err, salt) {
-    bcrypt.hash(req.body.password, salt, function(err, hash) {
-      var post = {
+  bcrypt.genSalt(10, (err, salt) => {
+    bcrypt.hash(req.body.password, salt, (err, hash) => {
+      const post = {
         username: req.body.username,
         password: hash,
         role: req.body.role
       }
       
-      var query = "SELECT username FROM ?? WHERE ??=?";
-      var table = ["user", "username", post.username];
+      let query = "SELECT username FROM ?? WHERE ??=?";
+      const table = ["user", "username", post.username];
     
       query = connection.format(query, table);
       
-      connection.query(query, function(error, rows) {
+      connection.query(query, (error, rows) => {
         if(error) {
             console.log(error);
         } else {
           if(rows.length == 0) {
-            var query = "INSERT INTO ?? SET ?";
-            var table = ["user"];
+            let query = "INSERT INTO ?? SET ?";
+            const table = ["user"];
             query = connection.format(query, table);
-            connection.query(query, post, function(error, rows) {
+            connection.query(query, post, (error, rows) => {
                 if(error) {
                     console.log(error);
                 } else {
@@ -57,6 +57,21 @@ exports.addUser = function(req, res) {
       })
     })
   })
-  
 }
 
+exports.getDataUserById = (req, res) => {
+  const id = req.params.id;
+  connection.query("SELECT * FROM user WHERE id = ?", [id],
+    (error, rows, fields) => {
+      if(error) {
+        console.log(error);
+      } else {
+        if (!rows.length) {
+          response.ok(res, false, "Data Tidak Tersedia")
+        } else {
+          response.ok(res, true, "Data Tersedia", rows[0]);
+        }
+      }
+    }
+  );
+};

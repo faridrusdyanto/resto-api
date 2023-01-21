@@ -1,7 +1,7 @@
 'use strict';
 
-exports.ok = function(res, status, message, values) {
-  var data = {
+exports.ok = (res, status, message, values) => {
+  const data = {
     'success': status,
     'message': message,
     'data': values,

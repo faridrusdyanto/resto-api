@@ -1,7 +1,7 @@
 'use strict';
+const jsonku = require('../controller');
 
-module.exports = function(app) {
-  var jsonku = require('./controller');
+module.exports = (app) => {
 
   app.route('/')
     .get(jsonku.index);
@@ -11,5 +11,9 @@ module.exports = function(app) {
 
   app.route('/add-user')
     .post(jsonku.addUser);
+
+  app.route('/data-user/:id')
+  .get(jsonku.getDataUserById);
+
 }
 
