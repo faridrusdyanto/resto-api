@@ -18,5 +18,8 @@ module.exports = (app) => {
   app.route('/change-password')
     .put(jsonku.changePassword);
 
+  app.route('/delete-user')
+  .post(jsonku.deleteUser);
+
 }
 

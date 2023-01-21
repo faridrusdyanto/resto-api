@@ -120,3 +120,25 @@ exports.changePassword = (req, res) => {
     }
   })
 }
+
+exports.deleteUser = (req, res) => {
+  const post = {
+    id: req.body.id,
+    idDelete: 1
+  }
+
+  let query = "UPDATE ?? SET ??=? WHERE ??=?";
+  const isDelete = ["user", "is_delete", post.idDelete, "id", post.id];
+  query = connection.format(query, isDelete);
+  connection.query(query, (error, rows) => {
+    if (error) {
+      console.log(error);
+    } else {
+      if (!rows.changedRows) {
+        response.ok(res, false, "Gagal Delete Data");
+      } else {
+        response.ok(res, true, "Berhasil Delete Data");
+      }
+    }
+  });
+}
