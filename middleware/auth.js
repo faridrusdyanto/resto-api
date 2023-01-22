@@ -1,10 +1,11 @@
-const connection = require('../connection');
+const connection = require('../config/connection');
 const mySql = require('mysql');
 const response = require('../res');
 const jwt = require('jsonwebtoken');
 const ip = require('ip');
 const bcrypt = require('bcrypt');
-const config = require('../config/secret');
+const dotenv = require('dotenv');
+dotenv.config()
 
 exports.login = (req, res) => {
   const post = {
@@ -27,7 +28,7 @@ exports.login = (req, res) => {
         
         bcrypt.compare(post.password, rows[0].password, (err, result) => {
           if (result) {
-            const token = jwt.sign({rows}, config.secret, {
+            const token = jwt.sign({rows}, process.env.SECRET_TOKENS, {
               expiresIn: 28800
             });
             
@@ -66,4 +67,8 @@ exports.login = (req, res) => {
       }
     }
   })
+}
+
+exports.halamanRahasia = (req, res) => {
+  response.ok(res, true, "Halaman administrator")
 }

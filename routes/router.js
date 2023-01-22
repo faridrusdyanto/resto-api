@@ -1,5 +1,5 @@
 'use strict';
-const jsonku = require('../controller');
+const jsonku = require('../controller/user');
 
 module.exports = (app) => {
 

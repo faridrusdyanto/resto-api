@@ -1,7 +1,7 @@
 'use strict';
 
-const response = require('./res');
-const connection = require('./connection');
+const response = require('../res');
+const connection = require('../config/connection');
 const bcrypt = require('bcrypt');
 
 exports.index = (req, res) => {
@@ -10,7 +10,9 @@ exports.index = (req, res) => {
 
 // get all data user
 exports.getDataUser = (req, res) => {
-  connection.query("SELECT * FROM user", (error, rows, fileds) => {
+  const is_delete = 0;
+  connection.query("SELECT * FROM user WHERE is_delete = ?", [is_delete],
+    (error, rows, fileds) => {
     if (error) {
       console.log(error);
     } else {
@@ -61,7 +63,8 @@ exports.addUser = (req, res) => {
 
 exports.getDataUserById = (req, res) => {
   const id = req.params.id;
-  connection.query("SELECT * FROM user WHERE id = ?", [id],
+  const isDelete = 0;
+  connection.query("SELECT * FROM user WHERE id = ? AND is_delete = ?", [id, isDelete],
     (error, rows, fields) => {
       if (error) {
         console.log(error);
