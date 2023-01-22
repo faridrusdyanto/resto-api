@@ -1,6 +1,6 @@
 const connection = require('../config/connection');
 const mySql = require('mysql');
-const response = require('../res');
+const response = require('../config/res');
 const jwt = require('jsonwebtoken');
 const ip = require('ip');
 const bcrypt = require('bcrypt');
@@ -67,8 +67,4 @@ exports.login = (req, res) => {
       }
     }
   })
-}
-
-exports.halamanRahasia = (req, res) => {
-  response.ok(res, true, "Halaman administrator")
 }

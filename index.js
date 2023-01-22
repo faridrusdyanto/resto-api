@@ -11,10 +11,9 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(morgan('dev'));
 app.use(cors());
-app.use(getRouter)
-// Daftarkan menu routes dari index
-app.use('/auth', require('./middleware'));
 
+// Daftarkan menu routes
+app.use(getRouter)
 
 app.listen(port, () => {
   console.log(`Server started on port ${port}`);

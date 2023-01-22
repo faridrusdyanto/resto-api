@@ -1,6 +1,6 @@
 'use strict';
 
-const response = require('../res');
+const response = require('../config/res');
 const connection = require('../config/connection');
 const bcrypt = require('bcrypt');
 
@@ -22,7 +22,7 @@ exports.getDataUser = (req, res) => {
 }
 
 // add user
-exports.addUser = (req, res) => {
+exports.addUser = async (req, res) => {
 
   bcrypt.genSalt(10, (err, salt) => {
     bcrypt.hash(req.body.password, salt, (err, hash) => {
