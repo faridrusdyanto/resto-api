@@ -86,8 +86,8 @@ exports.changePassword = (req, res) => {
     newPassword: req.body.newPassword
   }
 
-  let query = "SELECT * FROM ?? WHERE ??=?";
-  const table = ["user", "id", post.id];
+  let query = "SELECT * FROM ?? WHERE ??=? AND ??=?";
+  const table = ["user", "id", post.id, "is_delete", 0];
 
   query = connection.format(query, table);
   connection.query(query, (error, rows) => {

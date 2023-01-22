@@ -13,8 +13,8 @@ exports.login = (req, res) => {
     password: req.body.password
   }
   
-  let query = "SELECT * FROM ?? WHERE ??=?";
-  const table = ["user", "username", post.username];
+  let query = "SELECT * FROM ?? WHERE ??=? AND ??=?";
+  const table = ["user", "username", post.username, "is_delete", 0];
 
   query = mySql.format(query, table);
   connection.query(query, (error, rows) => {

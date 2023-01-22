@@ -7,7 +7,7 @@ router.get('/', service.index);
 router.get('/data-user', service.getDataUser);
 router.post('/add-user', service.addUser);
 router.get('/data-user/:id', service.getDataUserById);
-router.put('/change-password', service.changePassword);
+router.post('/change-password', service.changePassword);
 router.post('/delete-user', service.deleteUser)
 
 module.exports = router;
