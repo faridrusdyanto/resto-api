@@ -1,25 +1,13 @@
 'use strict';
-const jsonku = require('../controller/user');
+const service = require('../controller/user');
+const express = require('express');
+const router = express.Router();
 
-module.exports = (app) => {
+router.get('/', service.index);
+router.get('/data-user', service.getDataUser);
+router.post('/add-user', service.addUser);
+router.get('/data-user/:id', service.getDataUserById);
+router.put('/change-password', service.changePassword);
+router.post('/delete-user', service.deleteUser)
 
-  app.route('/')
-    .get(jsonku.index);
-
-  app.route('/data-user')
-    .get(jsonku.getDataUser);
-
-  app.route('/add-user')
-    .post(jsonku.addUser);
-
-  app.route('/data-user/:id')
-  .get(jsonku.getDataUserById);
-
-  app.route('/change-password')
-    .put(jsonku.changePassword);
-
-  app.route('/delete-user')
-  .post(jsonku.deleteUser);
-
-}
-
+module.exports = router;
