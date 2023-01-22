@@ -5,7 +5,8 @@ const connection = require('../config/connection');
 const bcrypt = require('bcrypt');
 
 exports.index = (req, res) => {
-  response.ok(res, true, 'Aplikasi REST API Berjalan')
+  const role = req.auth.rows[0].role;
+  response.ok(res, true, `Anda Login Sebagai Role ${role}`)
 }
 
 // get all data user
