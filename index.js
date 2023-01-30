@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const getRouter = require('./routes/router');
+const userRouter = require('./routes/userRouter');
 const morgan = require('morgan');
 const app = express();
 const cors = require('cors');
@@ -13,7 +13,7 @@ app.use(morgan('dev'));
 app.use(cors());
 
 // Daftarkan menu routes
-app.use(getRouter)
+app.use("/user", userRouter)
 
 app.listen(port, () => {
   console.log(`Server started on port ${port}`);

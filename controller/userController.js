@@ -1,8 +1,78 @@
 'use strict';
-
 const response = require('../config/res');
 const connection = require('../config/connection');
+const userModel = require('../model/userModel');
 const bcrypt = require('bcrypt');
+const { Op } = require("sequelize");
+const saltRounds = 10;
+
+const checkUsername = async (username) => {
+  try {
+    const getData = await userModel.findAll({
+      attributes: ['username'],
+      where: {
+        is_delete: 0,
+        username: username
+      }
+    });
+    return getData
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+const methodPost = async (req, res) => {
+  try {
+    const { username, password, role } = req.body;
+    const check = await checkUsername(username);
+    if (check.length > 0) {
+      response.ok(res, false, "User sudah terdaftar!");
+    } else {
+      bcrypt.hash(password, saltRounds, async (err, hash) => {
+        const store = new userModel({
+          username, password: hash, role
+        })
+        await store.save();
+        response.ok(res, true, "User berhasil ditambahkan");
+      });
+    }
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+const methodGet = async (req, res) => {
+  try {
+    const getData = await userModel.findAll({
+      attributes: ['id', 'username', 'role', 'createdAt', 'updatedAt'],
+      where: {
+        is_delete: 0
+      }
+    });
+    response.ok(res, true, "Data tersedia", getData)
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+const methodGetId = async (req, res) => {
+  try {
+    const id = req.params.id
+    const getData = await userModel.findOne({
+      where: { id: id }
+    });
+    response.ok(res, true, "Data tersedia", getData)
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+module.exports = {
+  methodPost,
+  methodGet,
+  methodGetId
+}
+
 
 exports.index = (req, res) => {
   const role = req.auth.rows[0].role;
@@ -14,16 +84,16 @@ exports.getDataUser = (req, res) => {
   const is_delete = 0;
   connection.query("SELECT * FROM user WHERE is_delete = ?", [is_delete],
     (error, rows, fileds) => {
-    if (error) {
-      console.log(error);
-    } else {
-      response.ok(res, true, "Data Tersedia", rows)
-    }
-  });
+      if (error) {
+        console.log(error);
+      } else {
+        response.ok(res, true, "Data Tersedia", rows)
+      }
+    });
 }
 
 // add user
-exports.addUser = async (req, res) => {
+exports.addUser = (req, res) => {
 
   bcrypt.genSalt(10, (err, salt) => {
     bcrypt.hash(req.body.password, salt, (err, hash) => {

@@ -1,5 +1,5 @@
 const connection = require('../config/connection');
-const mySql = require('mysql');
+// const mySql = require('mysql');
 const response = require('../config/res');
 const jwt = require('jsonwebtoken');
 const ip = require('ip');
