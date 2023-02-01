@@ -19,5 +19,6 @@ router.post('/add-user', userController.methodPost);
 router.get('/data-user', userController.methodGet);
 router.get('/data-user/:id', userController.methodGetId);
 router.post('/delete-user', userController.methodDelete);
+router.post('/change-password', userController.changePassword);
 
 module.exports = router;
