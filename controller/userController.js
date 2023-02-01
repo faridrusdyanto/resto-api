@@ -67,10 +67,27 @@ const methodGetId = async (req, res) => {
   }
 }
 
+const methodDelete = async (req, res) => {
+  try {
+    const { id } = req.body;
+
+    const updateUser = userModel.update({
+      id, is_delete: 1
+    }, {
+      where: { id: id }
+    })
+    await updateUser;
+    response.ok(res, true, "User berhasil dihapus");
+  } catch (err) {
+    console.error(err)
+  }
+}
+
 module.exports = {
   methodPost,
   methodGet,
-  methodGetId
+  methodGetId,
+  methodDelete
 }
 
 
