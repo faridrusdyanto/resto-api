@@ -8,7 +8,7 @@ const userModel = db.define(
       type: sequelize.BIGINT,
       primaryKey: true,
       autoIncrement: true,//comment
-      allowNull: false
+      allowNull: false // test2
     },
     username: { 
       type: sequelize.STRING(50),
