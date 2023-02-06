@@ -5,8 +5,8 @@ const userController = require('../controller/userController');
 const auth = require('../middleware/auth');
 const varification = require('../middleware/verification');
 
-// Daftarkan menu login
-// router.post('/login', auth.login);
+// ROUTING AUTH
+router.post('/login', auth.login);
 // router.get('/', varification.isAllRole(), service.index);
 // router.get('/data-user', varification.isAdmin(), service.getDataUser);
 // router.post('/add-user', varification.isAdmin(), service.addUser);

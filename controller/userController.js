@@ -1,6 +1,5 @@
 'use strict';
 const response = require('../config/res');
-const connection = require('../config/connection');
 const userModel = require('../model/userModel');
 const bcrypt = require('bcrypt');
 const { Op } = require("sequelize");
@@ -8,8 +7,7 @@ const saltRounds = 10;
 
 const checkUsername = async (username) => {
   try {
-    const getData = await userModel.findAll({
-      attributes: ['username'],
+    const getData = await userModel.findOne({
       where: {
         is_delete: 0,
         username: username
@@ -25,7 +23,7 @@ const methodPost = async (req, res) => {
   try {
     const { username, password, role } = req.body;
     const check = await checkUsername(username);
-    if (check.length > 0) {
+    if (check) {
       response.ok(res, false, "User sudah terdaftar!");
     } else {
       bcrypt.hash(password, saltRounds, async (err, hash) => {
@@ -135,7 +133,8 @@ module.exports = {
   methodGet,
   methodGetId,
   methodDelete,
-  changePassword
+  changePassword,
+  checkUsername
 }
 
 

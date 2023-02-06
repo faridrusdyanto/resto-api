@@ -1,13 +1,39 @@
 const connection = require('../config/connection');
-// const mySql = require('mysql');
 const response = require('../config/res');
+const userController = require('../controller/userController')
 const jwt = require('jsonwebtoken');
 const ip = require('ip');
 const bcrypt = require('bcrypt');
 const dotenv = require('dotenv');
 dotenv.config()
 
-exports.login = (req, res) => {
+const login = async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    const checkUser = await userController.checkUsername(username);
+    if (checkUser) {
+      const id_userDB = checkUser.id;
+      const usernameDB = checkUser.username;
+      const passwordDB = checkUser.password;
+      const roleDB = checkUser.role;
+      const checkPassword = await bcrypt.compare(password, passwordDB);
+      if (checkPassword) {
+        const token = jwt.sign({rows}, process.env.SECRET_TOKENS, {
+          expiresIn: 28800
+        });
+      } else {
+        response.ok(res, false, "Username atau password salah")
+      }
+    } else {
+      response.ok(res, false, "Username atau password salah")
+    }
+  } catch (err) {
+    console.error(err);
+    response.ok(res, false, 'error', err)
+  }
+}
+
+exports.loginLama = (req, res) => {
   const post = {
     username: req.body.username,
     password: req.body.password
@@ -67,4 +93,8 @@ exports.login = (req, res) => {
       }
     }
   })
+}
+
+module.exports = {
+  login
 }
