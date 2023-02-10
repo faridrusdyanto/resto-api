@@ -1,8 +1,9 @@
 const sequelize = require('sequelize');
 const db = require('../config/connection');
+const userModel = require('./userModel');
 
-const userModel = db.define(
-  "User",
+const accessTokenModel = db.define(
+  "AccessToken",
   {
     id: {
       type: sequelize.BIGINT,
@@ -10,27 +11,22 @@ const userModel = db.define(
       autoIncrement: true,
       allowNull: false
     },
-    username: { 
-      type: sequelize.STRING(50),
-      allowNull: false
-    },
-    password: { 
+    token: { 
       type: sequelize.TEXT,
       allowNull: false
     },
-    role: { 
+    ip_address: { 
       type: sequelize.STRING(50),
       allowNull: false,
     },
-    is_delete: { 
-      type: sequelize.INTEGER(1),
-      allowNull: false,
-      defaultValue: 0
-    },
   },
   {
-    tableName: "users"
+    tableName: "access_token"
   }
 );
 
-module.exports = userModel;
+userModel.hasOne(accessTokenModel, {
+  foreignKey: {name: 'id_user', allowNull: false }
+});
+
+module.exports = accessTokenModel;
