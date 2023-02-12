@@ -76,12 +76,12 @@ const methodDelete = async (req, res) => {
   try {
     const { id } = req.body;
 
-    const updateUser = userModel.update({
-      id, is_delete: 1
+    const deleteUser = userModel.update({
+      is_delete: 1
     }, {
       where: { id: id }
     })
-    await updateUser;
+    await deleteUser;
     response.ok(res, true, "User berhasil dihapus", 200);
   } catch (err) {
     console.error(err)

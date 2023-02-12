@@ -1,4 +1,3 @@
-const connection = require('../config/connection');
 const response = require('../config/res');
 const userController = require('../controller/userController')
 const accessTokenModel = require('../model/accessTokenModel');

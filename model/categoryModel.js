@@ -2,7 +2,7 @@ const sequelize = require('sequelize');
 const db = require('../config/connection');
 
 const userModel = db.define(
-  "User",
+  "Category",
   {
     id: {
       type: sequelize.BIGINT,
@@ -10,17 +10,9 @@ const userModel = db.define(
       autoIncrement: true,
       allowNull: false
     },
-    username: { 
+    category_name: { 
       type: sequelize.STRING(50),
       allowNull: false
-    },
-    password: { 
-      type: sequelize.TEXT,
-      allowNull: false
-    },
-    role: { 
-      type: sequelize.STRING(50),
-      allowNull: false,
     },
     is_delete: { 
       type: sequelize.TINYINT(1),
@@ -29,7 +21,7 @@ const userModel = db.define(
     },
   },
   {
-    tableName: "users"
+    tableName: "category"
   }
 );
 
