@@ -24,19 +24,19 @@ const methodPost = async (req, res) => {
     const { username, password, role } = req.body;
     const check = await checkUsername(username);
     if (check) {
-      response.ok(res, false, "User sudah terdaftar!");
+      response.ok(res, false, "User sudah terdaftar!", 409);
     } else {
       bcrypt.hash(password, saltRounds, async (err, hash) => {
         const store = new userModel({
           username, password: hash, role
         })
         await store.save();
-        response.ok(res, true, "User berhasil ditambahkan");
+        response.ok(res, true, "User berhasil ditambahkan", 201);
       });
     }
   } catch (err) {
     console.error(err)
-    response.ok(res, false, "error", err)
+    response.ok(res, false, "error", 400, err)
   }
 }
 
@@ -48,10 +48,10 @@ const methodGet = async (req, res) => {
         is_delete: 0
       }
     });
-    response.ok(res, true, "Data tersedia", getData)
+    response.ok(res, true, "Data tersedia", 200, getData)
   } catch (err) {
     console.error(err)
-    response.ok(res, false, "error", err)
+    response.ok(res, false, "error", 400, err)
   }
 }
 
@@ -61,10 +61,14 @@ const methodGetId = async (req, res) => {
     const getData = await userModel.findOne({
       where: { id: id }
     });
-    response.ok(res, true, "Data tersedia", getData)
+    if (getData) {
+      response.ok(res, true, "Data tersedia", 200, getData)
+    } else {
+      response.ok(res, false, "Data tidak tersedia", 404, getData)
+    }
   } catch (err) {
     console.error(err)
-    response.ok(res, false, "error", err)
+    response.ok(res, false, "error", 400, err)
   }
 }
 
@@ -78,10 +82,10 @@ const methodDelete = async (req, res) => {
       where: { id: id }
     })
     await updateUser;
-    response.ok(res, true, "User berhasil dihapus");
+    response.ok(res, true, "User berhasil dihapus", 200);
   } catch (err) {
     console.error(err)
-    response.ok(res, false, "error", err)
+    response.ok(res, false, "error", 400, err)
   }
 }
 
@@ -114,17 +118,27 @@ const changePassword = async (req, res) => {
             where: { id: id }
           })
           await updatePassword;
-          response.ok(res, true, "Password berhasil diupdate");
+          response.ok(res, true, "Password berhasil diupdate", 200);
         });
       } else {
-        response.ok(res, false, "Password lama tidak sesuai!");
+        response.ok(res, false, "Password lama tidak sesuai!", 400);
       }
     } else {
-      response.ok(res, false, "User tidak terdaftar!");
+      response.ok(res, false, "User tidak terdaftar!", 404);
     }
   } catch (err) {
     console.error(err)
-    response.ok(res, false, "error", err)
+    response.ok(res, false, "error", 400, err)
+  }
+}
+
+const index = async (req, res) => {
+  try {
+    const role = req.auth.role;
+    await response.ok(res, true, `Anda Login Sebagai Role ${role}`, 200)
+  } catch (err) {
+    console.error(err)
+    response.ok(res, false, 'error', 400, err)
   }
 }
 
@@ -134,11 +148,8 @@ module.exports = {
   methodGetId,
   methodDelete,
   changePassword,
-  checkUsername
+  checkUsername,
+  index
 }
 
 
-exports.index = (req, res) => {
-  const role = req.auth.rows[0].role;
-  response.ok(res, true, `Anda Login Sebagai Role ${role}`)
-}

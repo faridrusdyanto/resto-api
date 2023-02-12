@@ -2,23 +2,18 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controller/userController');
-const auth = require('../middleware/auth');
-const varification = require('../middleware/verification');
+const auth = require('../middleware/login');
+const verification = require('../middleware/verification');
 
 // ROUTING AUTH
 router.post('/login', auth.login);
-// router.get('/', varification.isAllRole(), service.index);
-// router.get('/data-user', varification.isAdmin(), service.getDataUser);
-// router.post('/add-user', varification.isAdmin(), service.addUser);
-// router.get('/data-user/:id', varification.isAllRole(), service.getDataUserById);
-// router.post('/change-password', varification.isAllRole(), service.changePassword);
-// router.post('/delete-user', varification.isAdmin(), service.deleteUser)
+router.get('/', verification.isAllRole, userController.index);
 
 // ROUTING USER 
-router.post('/add-user', userController.methodPost);
-router.get('/data-user', userController.methodGet);
-router.get('/data-user/:id', userController.methodGetId);
-router.post('/delete-user', userController.methodDelete);
-router.post('/change-password', userController.changePassword);
+router.post('/add-user', verification.isAdmin, userController.methodPost);
+router.get('/data-user', verification.isAdmin, userController.methodGet);
+router.get('/data-user/:id', verification.isAllRole, userController.methodGetId);
+router.post('/delete-user', verification.isAdmin, userController.methodDelete);
+router.post('/change-password', verification.isAllRole, userController.changePassword);
 
 module.exports = router;

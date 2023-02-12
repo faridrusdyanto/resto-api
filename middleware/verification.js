@@ -1,85 +1,68 @@
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
+const response = require('../config/res');
 dotenv.config();
 
-const isAdmin = () => {
-  return (req, rest, next) => {
-    // cek authorizzation header
-    var tokenWithBearer = req.headers.authorization;
-
-    if(tokenWithBearer) {
-      var token = tokenWithBearer.split(' ')[1];
-      // varification
-      jwt.verify(token, process.env.SECRET_TOKENS, (err, decoded) => {
-        const getRole = decoded.rows[0].role;
-        if(err) {
-          return rest.status(401).send({auth: false, message: "Token tidak terdaftar!"});
-        } else {
-          if(getRole === 'administrator') {
-            req.auth = decoded;
-            next();
-          } else {
-            return rest.status(401).send({auth: false, message: "Gagal mengotorisasi role anda!"});
-          }
-        }
-      });
+const isAdmin = async (req, res, next) => {
+  try {
+    const tokenWithBearer = req.headers.authorization;
+    if (tokenWithBearer) {
+      const token = tokenWithBearer.split(' ')[1];
+      const decoded = jwt.verify(token, process.env.SECRET_TOKENS);
+      const getRole = decoded.role;
+      if (getRole === 'administrator') {
+        req.auth = decoded;
+        await next();
+      } else {
+        await response.auth(res, false, "Gagal mengotorisasi role anda!", 403)
+      }
     } else {
-      return rest.status(401).send({auth: false, message: "Token tidak tersedia!"});
+      await response.auth(res, false, "Token tidak tersedia!", 401)
     }
+  } catch (err) {
+    await response.auth(res, false, "Token tidak terdaftar!", 401)
   }
 }
 
-const isKasir = () => {
-  return (req, rest, next) => {
-    // cek authorizzation header
-    var tokenWithBearer = req.headers.authorization;
-
-    if(tokenWithBearer) {
-      var token = tokenWithBearer.split(' ')[1];
-      // varification
-      jwt.verify(token, process.env.SECRET_TOKENS, (err, decoded) => {
-        const getRole = decoded.rows[0].role;
-        if(err) {
-          return rest.status(401).send({auth: false, message: "Token tidak terdaftar!"});
-        } else {
-          if(getRole === 'karyawan') {
-            req.auth = decoded;
-            next();
-          } else {
-            return rest.status(401).send({auth: false, message: "Gagal mengotorisasi role anda!"});
-          }
-        }
-      });
+const isKasir = async (req, res, next) => {
+  try {
+    const tokenWithBearer = req.headers.authorization;
+    if (tokenWithBearer) {
+      const token = tokenWithBearer.split(' ')[1];
+      const decoded = jwt.verify(token, process.env.SECRET_TOKENS);
+      const getRole = decoded.role;
+      if (getRole === 'kasir') {
+        req.auth = decoded;
+        await next();
+      } else {
+        await response.auth(res, false, "Gagal mengotorisasi role anda!", 403)
+      }
     } else {
-      return rest.status(401).send({auth: false, message: "Token tidak tersedia!"});
+      await response.auth(res, false, "Token tidak tersedia!", 401)
     }
+  } catch (err) {
+    await response.auth(res, false, "Token tidak terdaftar!", 401)
   }
 }
 
-const isAllRole = () => {
-  return (req, rest, next) => {
-    // cek authorizzation header
-    var tokenWithBearer = req.headers.authorization;
-
-    if(tokenWithBearer) {
-      var token = tokenWithBearer.split(' ')[1];
-      // varification
-      jwt.verify(token, process.env.SECRET_TOKENS, (err, decoded) => {
-        const getRole = decoded.rows[0].role;
-        if(err) {
-          return rest.status(401).send({auth: false, message: "Token tidak terdaftar!"});
-        } else {
-          if(getRole === 'karyawan' || getRole === 'administrator') {
-            req.auth = decoded;
-            next();
-          } else {
-            return rest.status(401).send({auth: false, message: "Gagal mengotorisasi role anda!"});
-          }
-        }
-      });
+const isAllRole = async (req, res, next) => {
+  try {
+    const tokenWithBearer = req.headers.authorization;
+    if (tokenWithBearer) {
+      const token = tokenWithBearer.split(' ')[1];
+      const decoded = jwt.verify(token, process.env.SECRET_TOKENS);
+      const getRole = decoded.role;
+      if (getRole === 'kasir' || getRole === 'administrator') {
+        req.auth = decoded;
+        await next();
+      } else {
+        await response.auth(res, false, "Gagal mengotorisasi role anda!", 403)
+      }
     } else {
-      return rest.status(401).send({auth: false, message: "Token tidak tersedia!"});
+      await response.auth(res, false, "Token tidak tersedia!", 401)
     }
+  } catch (err) {
+    await response.auth(res, false, "Token tidak terdaftar!", 401)
   }
 }
 
