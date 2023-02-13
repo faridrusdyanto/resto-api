@@ -5,6 +5,7 @@ const auth = require('../middleware/login');
 const verification = require('../middleware/verification');
 const userController = require('../controller/userController');
 const categoryController = require('../controller/categoryController');
+const productController = require('../controller/productController');
 
 // ROUTING AUTH
 router.post('/login', auth.login);
@@ -23,5 +24,9 @@ router.get('/data-category', categoryController.methodGet);
 router.get('/data-category/:id', categoryController.methodGetId);
 router.post('/delete-category', verification.isAdmin, categoryController.methodDelete);
 router.post('/update-category', verification.isAdmin, categoryController.methodUpdate);
+
+// ROUTING PRODUCT
+router.post('/add-product', verification.isAdmin, productController.methodPost);
+router.get('/data-product', productController.methodGet);
 
 module.exports = router;
