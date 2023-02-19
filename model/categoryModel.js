@@ -1,7 +1,8 @@
 const sequelize = require('sequelize');
 const db = require('../config/connection');
+// const productModel = require('./productModel');
 
-const userModel = db.define(
+const categoryModel = db.define(
   "Category",
   {
     id: {
@@ -25,4 +26,4 @@ const userModel = db.define(
   }
 );
 
-module.exports = userModel;
+module.exports = categoryModel;

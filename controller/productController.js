@@ -1,6 +1,19 @@
 'use strict';
 const response = require('../config/res');
 const productModel = require('../model/productModel');
+const db = require('../config/connection');
+const { QueryTypes } = require('sequelize');
+
+const dataProductAll = async () => {
+  const getData = await db.query(
+    "SELECT `a`.`id`, `a`.`product_name`, `a`.`product_desc`, `a`.`price`, `a`.`image`, `a`.`available`, `b`.`category_name` " + 
+    "FROM  `product` `a` LEFT JOIN `category` `b` ON `b`.`id` = `a`.`id_category` WHERE `a`.`is_delete` = 0 AND `a`.`product_name` = :name", 
+    {
+      replacements: { name: 'Nasi Goreng' }, 
+      type: QueryTypes.SELECT 
+    });
+  return getData
+}
 
 const methodPost = async (req, res) => {
   try {
@@ -18,12 +31,8 @@ const methodPost = async (req, res) => {
 
 const methodGet = async (req, res) => {
   try {
-    const getData = await productModel.findAll({
-      where: {
-        is_delete: 0
-      }
-    });
-    response.ok(res, true, "Data tersedia", 200, getData)
+    const getData = await dataProductAll();
+    await response.ok(res, true, "Data tersedia", 200, getData)
   } catch (err) {
     console.error(err)
     response.ok(res, false, "error", 400, err)
