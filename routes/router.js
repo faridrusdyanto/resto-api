@@ -12,7 +12,7 @@ router.post('/login', auth.login);
 router.get('/', verification.isAllRole, userController.index);
 
 // ROUTING USER 
-router.post('/add-user', userController.methodPost);
+router.post('/add-user', verification.isAdmin, userController.methodPost);
 router.get('/data-user', verification.isAdmin, userController.methodGet);
 router.get('/data-user/:id', verification.isAllRole, userController.methodGetId);
 router.post('/delete-user', verification.isAdmin, userController.methodDelete);
@@ -21,14 +21,14 @@ router.post('/change-password', verification.isAllRole, userController.changePas
 // ROUTING CATEGORY
 router.post('/add-category', verification.isAdmin, categoryController.methodPost);
 router.get('/data-category', verification.isAdmin, categoryController.methodGet);
-router.get('/category-and-product', categoryController.dataCategoryAndProduct);
+router.get('/category-and-product', categoryController.dataCategoryAndProduct); // List menu untuk customer
 router.get('/data-category/:id', verification.isAdmin, categoryController.methodGetId);
 router.post('/delete-category', verification.isAdmin, categoryController.methodDelete);
 router.post('/update-category', verification.isAdmin, categoryController.methodUpdate);
 
 // ROUTING PRODUCT
 // router.post('/add-product', verification.isAdmin, productController.methodPost);
-router.post('/add-product', productController.methodPost);
-router.get('/data-product-and-category', productController.dataProductAndCategory);
+router.post('/add-product', verification.isAdmin, productController.methodPost);
+router.get('/data-product-and-category', productController.dataProductAndCategory); // List menu untuk customer
 
 module.exports = router;

@@ -40,7 +40,7 @@ const login = async (req, res) => {
         response.ok(res, false, "Username atau password salah", 404)
       }
     } else {
-      response.ok(res, false, "Username atau password salah", 404)
+      response.ok(res, false, "Username tidak terdaftar", 404)
     }
   } catch (err) {
     console.error(err);
