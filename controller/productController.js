@@ -7,8 +7,8 @@ const { QueryTypes } = require('sequelize');
 const dataProductAndCategory = async (req, res) => {
   try {
     const getData = await db.query(
-      "SELECT `a`.`id`, `a`.`product_name`, `a`.`product_desc`, `a`.`price`, `a`.`image`, `a`.`available`, `b`.`category_name` " + 
-      "FROM  `product` `a` LEFT JOIN `category` `b` ON `b`.`id` = `a`.`id_category` WHERE `a`.`is_delete` = 0", 
+      "SELECT `a`.`id`, `a`.`product_name`, `a`.`product_desc`, `a`.`price`, `a`.`image`, `b`.`category_name` " + 
+      "FROM  `product` `a` LEFT JOIN `category` `b` ON `b`.`id` = `a`.`id_category` WHERE `a`.`is_delete` = 0 AND  `a`.`available` = 1", 
       {
         type: QueryTypes.SELECT 
       });
@@ -27,16 +27,6 @@ const methodPost = async (req, res) => {
     })
     await store.save();
     response.ok(res, true, "Produk berhasil ditambahkan", 201);
-  } catch (err) {
-    console.error(err)
-    response.ok(res, false, "error", 400, err)
-  }
-}
-
-const methodGet = async (req, res) => {
-  try {
-    const getData = await dataProductAll();
-    await response.ok(res, true, "Data tersedia", 200, getData)
   } catch (err) {
     console.error(err)
     response.ok(res, false, "error", 400, err)
@@ -95,7 +85,6 @@ const methodGet = async (req, res) => {
 
 module.exports = {
   methodPost,
-  methodGet,
   dataProductAndCategory,
 //   methodGetId,
 //   methodDelete,

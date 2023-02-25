@@ -19,18 +19,16 @@ router.post('/delete-user', verification.isAdmin, userController.methodDelete);
 router.post('/change-password', verification.isAllRole, userController.changePassword);
 
 // ROUTING CATEGORY
-// router.post('/add-category', verification.isAdmin, categoryController.methodPost);
-router.post('/add-category', categoryController.methodPost);
-router.get('/data-category', categoryController.methodGet);
+router.post('/add-category', verification.isAdmin, categoryController.methodPost);
+router.get('/data-category', verification.isAdmin, categoryController.methodGet);
 router.get('/category-and-product', categoryController.dataCategoryAndProduct);
-router.get('/data-category/:id', categoryController.methodGetId);
+router.get('/data-category/:id', verification.isAdmin, categoryController.methodGetId);
 router.post('/delete-category', verification.isAdmin, categoryController.methodDelete);
 router.post('/update-category', verification.isAdmin, categoryController.methodUpdate);
 
 // ROUTING PRODUCT
 // router.post('/add-product', verification.isAdmin, productController.methodPost);
 router.post('/add-product', productController.methodPost);
-router.get('/data-product', productController.methodGet);
 router.get('/data-product-and-category', productController.dataProductAndCategory);
 
 module.exports = router;
