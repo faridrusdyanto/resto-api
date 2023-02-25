@@ -1,6 +1,8 @@
 'use strict';
 const response = require('../config/res');
 const categoryModel = require('../model/categoryModel');
+const db = require('../config/connection');
+const { QueryTypes } = require('sequelize');
 
 const methodPost = async (req, res) => {
   try {
@@ -63,6 +65,7 @@ const methodDelete = async (req, res) => {
     response.ok(res, false, "error", 400, err)
   }
 }
+
 const methodUpdate = async (req, res) => {
   try {
     const { id, category_name } = req.body;
@@ -80,10 +83,60 @@ const methodUpdate = async (req, res) => {
   }
 }
 
+const dataCategoryAndProduct = async (req, res) => {
+  try {
+    const getData = await db.query(
+      "SELECT `b`.`id` AS `id_product`, `b`.`product_name`, `b`.`product_desc`, " +
+      "`b`.`price`, `b`.`image`, `a`.`id` AS `id_category`, `a`.`category_name` " +
+      "FROM  `category` `a` LEFT JOIN `product` `b` ON `b`.`id_category` = `a`.`id` " + 
+      "WHERE `a`.`is_delete` = 0 AND `b`.`available` = 1",
+      {
+        type: QueryTypes.SELECT
+      }
+    );
+  
+    const mappedData = getData.reduce((acc, current) => {
+      const categoryIndex = acc.findIndex(item => item.id_category === current.id_category);
+  
+      if (categoryIndex !== -1) {
+        acc[categoryIndex].product.push({
+          id_product: current.id_product,
+          product_name: current.product_name,
+          product_desc: current.product_desc,
+          price: current.price,
+          image: current.image
+        });
+      } else {
+        acc.push({
+          id_category: current.id_category,
+          category_name: current.category_name,
+          product: [
+            {
+              id_product: current.id_product,
+              product_name: current.product_name,
+              product_desc: current.product_desc,
+              price: current.price,
+              image: current.image
+            }
+          ]
+        });
+      }
+  
+      return acc;
+    }, []);
+  
+    // console.log(mappedData);
+    response.ok(res, true, "Data tersedia", 200, mappedData)
+  } catch (err) {
+    console.error(err);
+  }
+}
+
 module.exports = {
   methodPost,
   methodGet,
   methodGetId,
   methodDelete,
-  methodUpdate
+  methodUpdate,
+  dataCategoryAndProduct
 }

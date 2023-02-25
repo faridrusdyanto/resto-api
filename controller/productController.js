@@ -4,15 +4,19 @@ const productModel = require('../model/productModel');
 const db = require('../config/connection');
 const { QueryTypes } = require('sequelize');
 
-const dataProductAll = async () => {
-  const getData = await db.query(
-    "SELECT `a`.`id`, `a`.`product_name`, `a`.`product_desc`, `a`.`price`, `a`.`image`, `a`.`available`, `b`.`category_name` " + 
-    "FROM  `product` `a` LEFT JOIN `category` `b` ON `b`.`id` = `a`.`id_category` WHERE `a`.`is_delete` = 0 AND `a`.`product_name` = :name", 
-    {
-      replacements: { name: 'Nasi Goreng' }, 
-      type: QueryTypes.SELECT 
-    });
-  return getData
+const dataProductAndCategory = async (req, res) => {
+  try {
+    const getData = await db.query(
+      "SELECT `a`.`id`, `a`.`product_name`, `a`.`product_desc`, `a`.`price`, `a`.`image`, `a`.`available`, `b`.`category_name` " + 
+      "FROM  `product` `a` LEFT JOIN `category` `b` ON `b`.`id` = `a`.`id_category` WHERE `a`.`is_delete` = 0", 
+      {
+        type: QueryTypes.SELECT 
+      });
+    response.ok(res, true, "Data tersedia", 200, getData)
+  } catch (err) {
+    console.error(err);
+  }
+  
 }
 
 const methodPost = async (req, res) => {
@@ -92,6 +96,7 @@ const methodGet = async (req, res) => {
 module.exports = {
   methodPost,
   methodGet,
+  dataProductAndCategory,
 //   methodGetId,
 //   methodDelete,
 //   methodUpdate
