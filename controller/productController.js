@@ -16,7 +16,20 @@ const dataProductAndCategory = async (req, res) => {
   } catch (err) {
     console.error(err);
   }
-  
+}
+
+const methodGet = async (req, res) => {
+  try {
+    const getData = await productModel.findAll({
+      where: {
+        is_delete: 0
+      }
+    });
+    response.ok(res, true, "Data tersedia", 200, getData)
+  } catch (err) {
+    console.error(err)
+    response.ok(res, false, "error", 400, err)
+  }
 }
 
 const methodPost = async (req, res) => {
@@ -86,6 +99,7 @@ const methodPost = async (req, res) => {
 module.exports = {
   methodPost,
   dataProductAndCategory,
+  methodGet
 //   methodGetId,
 //   methodDelete,
 //   methodUpdate
