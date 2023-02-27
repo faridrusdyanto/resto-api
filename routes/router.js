@@ -27,9 +27,11 @@ router.post('/delete-category', verification.isAdmin, categoryController.methodD
 router.post('/update-category', verification.isAdmin, categoryController.methodUpdate);
 
 // ROUTING PRODUCT
-// router.post('/add-product', verification.isAdmin, productController.methodPost);
 router.post('/add-product', verification.isAdmin, productController.methodPost);
-router.get('/data-product-and-category', productController.dataProductAndCategory); // List menu untuk customer
+router.post('/delete-product', verification.isAdmin, productController.methodDelete);
+router.post('/update-product', verification.isAdmin, productController.methodUpdate);
 router.get('/data-product', verification.isAllRole, productController.methodGet);
+router.get('/data-product-and-category', productController.dataProductAndCategory); // List menu untuk customer
+router.get('/data-product/:id', productController.methodGetId);
 
 module.exports = router;

@@ -34,9 +34,9 @@ const methodGet = async (req, res) => {
 
 const methodPost = async (req, res) => {
   try {
-    const { product_name, product_desc, price, image, available, id_category } = req.body;
+    const { product_name, product_desc, price, image, id_category } = req.body;
     const store = new productModel({
-        product_name, product_desc, price, image, available, id_category
+        product_name, product_desc, price, image, id_category
     })
     await store.save();
     response.ok(res, true, "Produk berhasil ditambahkan", 201);
@@ -46,61 +46,62 @@ const methodPost = async (req, res) => {
   }
 }
 
-// const methodGetId = async (req, res) => {
-//   try {
-//     const id = req.params.id
-//     const getData = await productModel.findOne({
-//       where: { id: id }
-//     });
-//     if (getData) {
-//       response.ok(res, true, "Data tersedia", 200, getData)
-//     } else {
-//       response.ok(res, false, "Data tidak tersedia", 404, getData)
-//     }
-//   } catch (err) {
-//     console.error(err)
-//     response.ok(res, false, "error", 400, err)
-//   }
-// }
+const methodGetId = async (req, res) => {
+  try {
+    const id = req.params.id
+    const getData = await productModel.findOne({
+      where: { id, is_delete: 0 }
+    });
+    if (getData) {
+      response.ok(res, true, "Data tersedia", 200, getData)
+    } else {
+      response.ok(res, false, "Data tidak tersedia", 200, getData)
+    }
+  } catch (err) {
+    console.error(err)
+    response.ok(res, false, "error", 400, err)
+  }
+}
 
-// const methodDelete = async (req, res) => {
-//   try {
-//     const { id } = req.body;
+const methodDelete = async (req, res) => {
+  try {
+    const id = req.body.id;
 
-//     const deleteCategory = productModel.update({
-//       is_delete: 1
-//     }, {
-//       where: { id: id }
-//     })
-//     await deleteCategory;
-//     response.ok(res, true, "Category berhasil dihapus", 200);
-//   } catch (err) {
-//     console.error(err)
-//     response.ok(res, false, "error", 400, err)
-//   }
-// }
-// const methodUpdate = async (req, res) => {
-//   try {
-//     const { id, category_name } = req.body;
+    const deleteCategory = productModel.update({
+      is_delete: 1
+    }, {
+      where: { id }
+    })
+    await deleteCategory;
+    response.ok(res, true, "Product berhasil dihapus", 200);
+  } catch (err) {
+    console.error(err)
+    response.ok(res, false, "error", 400, err)
+  }
+}
 
-//     const updateCategory = productModel.update({
-//       category_name
-//     }, {
-//       where: { id }
-//     })
-//     await updateCategory;
-//     response.ok(res, true, "Category berhasil diupdate", 200);
-//   } catch (err) {
-//     console.error(err)
-//     response.ok(res, false, "error", 400, err)
-//   }
-// }
+const methodUpdate = async (req, res) => {
+  try {
+    const { id, product_name, product_desc, price, image } = req.body;
+
+    const updateCategory = productModel.update({
+      product_name, product_desc, price, image
+    }, {
+      where: { id }
+    })
+    await updateCategory;
+    response.ok(res, true, "Category berhasil diupdate", 200);
+  } catch (err) {
+    console.error(err)
+    response.ok(res, false, "error", 400, err)
+  }
+}
 
 module.exports = {
   methodPost,
   dataProductAndCategory,
-  methodGet
-//   methodGetId,
-//   methodDelete,
-//   methodUpdate
+  methodGet,
+  methodGetId,
+  methodDelete,
+  methodUpdate
 }
