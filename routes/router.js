@@ -33,5 +33,6 @@ router.post('/update-product', verification.isAdmin, productController.methodUpd
 router.get('/data-product', verification.isAllRole, productController.methodGet);
 router.get('/data-product-and-category', productController.dataProductAndCategory); // List menu untuk customer
 router.get('/data-product/:id', productController.methodGetId);
+router.post('/update-available', verification.isAllRole, productController.methodAvailable);
 
 module.exports = router;

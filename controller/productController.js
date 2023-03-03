@@ -97,11 +97,28 @@ const methodUpdate = async (req, res) => {
   }
 }
 
+const methodAvailable = async (req, res) => {
+  try {
+    const { id, available } = req.body;
+    const updateAvailable = productModel.update({
+      available
+    }, {
+      where: { id }
+    })
+    await updateAvailable
+    response.ok(res, true, "Berhasil update ketersediaan produk", 200);
+  } catch (err) {
+    console.error(err);
+    response.ok(res, false, "error", 400, err);
+  }
+}
+
 module.exports = {
   methodPost,
   dataProductAndCategory,
   methodGet,
   methodGetId,
   methodDelete,
-  methodUpdate
+  methodUpdate,
+  methodAvailable
 }
