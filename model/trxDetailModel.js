@@ -1,6 +1,7 @@
 const sequelize = require('sequelize');
 const db = require('../config/connection');
 const productModel = require('./productModel');
+const trxModel = require('./trxModel');
 
 const trxDetailModel = db.define(
   "TrxDetail",
@@ -9,10 +10,6 @@ const trxDetailModel = db.define(
       type: sequelize.BIGINT,
       primaryKey: true,
       autoIncrement: true,
-      allowNull: false
-    },
-    trx_number: { 
-      type: sequelize.STRING(50),
       allowNull: false
     },
     qty: { 
@@ -32,6 +29,10 @@ const trxDetailModel = db.define(
 
 productModel.hasOne(trxDetailModel, {
   foreignKey: { name: 'id_product', allowNull: false }
+});
+
+trxModel.hasMany(trxDetailModel, {
+  foreignKey: { name: 'id_trx', allowNull: false }
 });
 
 module.exports = trxDetailModel;

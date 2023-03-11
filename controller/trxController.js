@@ -49,7 +49,7 @@ const methodPost = async (req, res) => {
     await store.save();
     for (let i = 0; i < product.length; i++) {
       const storeDetail = new trxDetailModel({
-        trx_number, qty: product[i].qty, id_product: product[i].id_product
+        qty: product[i].qty, id_product: product[i].id_product, id_trx: store.id
       })
       await storeDetail.save();
     }
@@ -60,36 +60,49 @@ const methodPost = async (req, res) => {
   }
 }
 
-// const methodGet = async (req, res) => {
-//   try {
-//     const getData = await categoryModel.findAll({
-//       where: {
-//         is_delete: 0
-//       }
-//     });
-//     response.ok(res, true, "Data tersedia", 200, getData)
-//   } catch (err) {
-//     console.error(err)
-//     response.ok(res, false, "error", 400, err)
-//   }
-// }
+const methodGet = async (req, res) => {
+  try {
+    const getData = await trxModel.findAll({
+      where: {
+        is_buy: 0
+      }
+    });
+    response.ok(res, true, "Data tersedia", 200, getData)
+  } catch (err) {
+    console.error(err)
+    response.ok(res, false, "error", 400, err)
+  }
+}
 
-// const methodGetId = async (req, res) => {
-//   try {
-//     const id = req.params.id
-//     const getData = await categoryModel.findOne({
-//       where: { id: id }
-//     });
-//     if (getData) {
-//       response.ok(res, true, "Data tersedia", 200, getData)
-//     } else {
-//       response.ok(res, false, "Data tidak tersedia", 404, getData)
-//     }
-//   } catch (err) {
-//     console.error(err)
-//     response.ok(res, false, "error", 400, err)
-//   }
-// }
+const methodGetId = async (req, res) => {
+  try {
+    const id = req.params.id
+    const getData = await db.query(
+      "SELECT a.*, b.id AS id_detail, b.qty, " +
+      "c.product_name, c.price, c.image " +
+      "FROM  trx a LEFT JOIN trx_detail b ON b.id_trx = a.id " + 
+      "LEFT JOIN product c ON c.id = b.id_product " + 
+      "WHERE b.is_delete = 0 AND a.id = :id",
+      {
+        replacements: { id },
+        type: QueryTypes.SELECT
+      }
+    );
+  
+    const result = getData.reduce((acc, curr) => {
+      const { id_detail, qty, product_name, price, image, ...rest } = curr;
+      if (!acc.id) {
+        acc = { ...rest, detail: [] };
+      }
+      acc.detail.push({ id_detail, qty, product_name, price, image });
+      return acc;
+    }, {});
+    
+    response.ok(res, true, "Data tersedia", 200, result)
+  } catch (err) {
+    console.error(err);
+  }
+}
 
 // const methodDelete = async (req, res) => {
 //   try {
@@ -176,8 +189,8 @@ const methodPost = async (req, res) => {
 
 module.exports = {
   methodPost,
-  // methodGet,
-  // methodGetId,
+  methodGet,
+  methodGetId,
   // methodDelete,
   // methodUpdate,
   // dataCategoryAndProduct
