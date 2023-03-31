@@ -38,7 +38,8 @@ router.post('/update-available', verification.isAllRole, productController.metho
 
 // TRANSACTIONS
 router.post('/add-trx', trxController.methodPost);
-router.get('/data-trx', trxController.methodGet);
-router.get('/data-trx/:id', trxController.methodGetId);
+router.get('/data-trx', verification.isAllRole, trxController.methodGet);
+router.get('/data-trx/:id', verification.isAllRole, trxController.methodGetId);
+router.post('/update-payment', verification.isAllRole, trxController.updatePayment);
 
 module.exports = router;

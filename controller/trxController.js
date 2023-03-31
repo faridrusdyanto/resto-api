@@ -121,22 +121,22 @@ const methodGetId = async (req, res) => {
 //   }
 // }
 
-// const methodUpdate = async (req, res) => {
-//   try {
-//     const { id, category_name } = req.body;
-
-//     const updateCategory = categoryModel.update({
-//       category_name
-//     }, {
-//       where: { id }
-//     })
-//     await updateCategory;
-//     response.ok(res, true, "Category berhasil diupdate", 200);
-//   } catch (err) {
-//     console.error(err)
-//     response.ok(res, false, "error", 400, err)
-//   }
-// }
+const updatePayment = async (req, res) => {
+  try {
+    const id_user = req.auth.id_user;
+    const { id, is_buy } = req.body;
+    const queryUpdatePayment = trxModel.update({
+      is_buy, id_kasir: id_user
+    }, {
+      where: { id }
+    })
+    await queryUpdatePayment;
+    response.ok(res, true, "Pembayaran berhasil", 200);
+  } catch (err) {
+    console.error(err)
+    response.ok(res, false, "error", 400, err)
+  }
+}
 
 // const dataCategoryAndProduct = async (req, res) => {
 //   try {
@@ -191,6 +191,7 @@ module.exports = {
   methodPost,
   methodGet,
   methodGetId,
+  updatePayment
   // methodDelete,
   // methodUpdate,
   // dataCategoryAndProduct
