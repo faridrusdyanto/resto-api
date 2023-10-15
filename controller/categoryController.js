@@ -7,11 +7,18 @@ const { QueryTypes } = require('sequelize');
 const methodPost = async (req, res) => {
   try {
     const { category_name } = req.body;
-    const store = new categoryModel({
-      category_name
-    })
-    await store.save();
-    response.ok(res, true, "Category berhasil ditambahkan", 201);
+    const getData = await categoryModel.findOne({
+      where: { category_name, is_delete: 0 }
+    });
+    if (getData) {
+      await response.ok(res, false, "Category sudah ada", 400);
+    } else {
+      const store = new categoryModel({
+        category_name
+      })
+      await store.save();
+      await response.ok(res, true, "Category berhasil ditambahkan", 201);
+    }
   } catch (err) {
     console.error(err)
     response.ok(res, false, "error", 400, err)
