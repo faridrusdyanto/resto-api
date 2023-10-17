@@ -1,6 +1,7 @@
 'use strict';
 const response = require('../config/res');
 const trxModel = require('../model/trxModel');
+const productModel = require('../model/productModel');
 const trxDetailModel = require('../model/trxDetailModel');
 const db = require('../config/connection');
 const { QueryTypes } = require('sequelize');
@@ -13,7 +14,7 @@ const generateTrxNumber = async (todayDate) => {
       "SELECT MAX(RIGHT(LEFT(a.trx_number, 9),3)) as seq " +
       "FROM  trx a " +
       "WHERE DAY(a.createdAt) = :day " +
-      "AND MONTH(a.createdAt) = :month " + 
+      "AND MONTH(a.createdAt) = :month " +
       "AND YEAR(a.createdAt) = :year ",
       {
         replacements: { day: param[2], month: param[1], year: param[0] },
@@ -37,23 +38,50 @@ const generateTrxNumber = async (todayDate) => {
   }
 }
 
+const totalPrice = async (dataArray) => {
+  const productIdArray = dataArray.map((item) => item.id_product);
+  const products = await productModel.findAll({
+    where: {
+      id: productIdArray
+    }
+  });
+  let total = 0;
+  products.forEach((product) => {
+    const productInfo = dataArray.find((item) => item.id_product === product.id);
+    total += product.price * productInfo.qty;
+  });
+  
+  return total;
+}
+
 const methodPost = async (req, res) => {
   try {
-    let { customer_name, seat, note, payment, product } = req.body;
+    let { customer_name, seat, note, product } = req.body;
     note = note ? note : null;
+    const payment = await totalPrice(product);
+    
     const todayDate = new Date().toISOString().slice(0, 10);
     const trx_number = await generateTrxNumber(todayDate);
-    const store = new trxModel({
-      trx_number, customer_name, seat, note, payment
-    })
-    await store.save();
-    for (let i = 0; i < product.length; i++) {
-      const storeDetail = new trxDetailModel({
-        qty: product[i].qty, id_product: product[i].id_product, id_trx: store.id
-      })
-      await storeDetail.save();
-    }
-    response.ok(res, true, "Pesanan berhasil dibuat", 201);
+    // Simpan data transaksi ke tabel trx
+    const store = await trxModel.create({
+      trx_number,
+      customer_name,
+      seat,
+      note,
+      payment,
+    });
+
+    // Buat array untuk menyimpan data trx_detail
+    const trxDetails = product.map((item) => ({
+      qty: item.qty,
+      id_product: item.id_product,
+      id_trx: store.id,
+    }));
+
+    // Simpan semua data trx_detail sekaligus
+    await trxDetailModel.bulkCreate(trxDetails);
+
+    response.ok(res, true, "Pesanan berhasil dibuat", 201, {trx_number});
   } catch (err) {
     console.error(err)
     response.ok(res, false, "error", 400, err)
@@ -80,15 +108,15 @@ const methodGetId = async (req, res) => {
     const getData = await db.query(
       "SELECT a.*, b.id AS id_detail, b.qty, " +
       "c.product_name, c.price, c.image " +
-      "FROM  trx a LEFT JOIN trx_detail b ON b.id_trx = a.id " + 
-      "LEFT JOIN product c ON c.id = b.id_product " + 
+      "FROM  trx a LEFT JOIN trx_detail b ON b.id_trx = a.id " +
+      "LEFT JOIN product c ON c.id = b.id_product " +
       "WHERE b.is_delete = 0 AND a.id = :id",
       {
         replacements: { id },
         type: QueryTypes.SELECT
       }
     );
-  
+
     const result = getData.reduce((acc, curr) => {
       const { id_detail, qty, product_name, price, image, ...rest } = curr;
       if (!acc.id) {
@@ -97,7 +125,7 @@ const methodGetId = async (req, res) => {
       acc.detail.push({ id_detail, qty, product_name, price, image });
       return acc;
     }, {});
-    
+
     response.ok(res, true, "Data tersedia", 200, result)
   } catch (err) {
     console.error(err);
@@ -149,10 +177,10 @@ const updatePayment = async (req, res) => {
 //         type: QueryTypes.SELECT
 //       }
 //     );
-  
+
 //     const mappedData = getData.reduce((acc, current) => {
 //       const categoryIndex = acc.findIndex(item => item.id_category === current.id_category);
-  
+
 //       if (categoryIndex !== -1) {
 //         acc[categoryIndex].product.push({
 //           id_product: current.id_product,
@@ -176,10 +204,10 @@ const updatePayment = async (req, res) => {
 //           ]
 //         });
 //       }
-  
+
 //       return acc;
 //     }, []);
-  
+
 //     // console.log(mappedData);
 //     response.ok(res, true, "Data tersedia", 200, mappedData)
 //   } catch (err) {
