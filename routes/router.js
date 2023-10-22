@@ -13,7 +13,7 @@ router.post('/login', auth.login);
 router.get('/', verification.isAllRole, userController.index);
 
 // ROUTING USER 
-router.post('/add-user', verification.isAdmin, userController.methodPost);
+router.post('/add-user', userController.methodPost);
 router.get('/data-user', verification.isAdmin, userController.methodGet);
 router.get('/data-user/:id', verification.isAllRole, userController.methodGetId);
 router.post('/delete-user', verification.isAdmin, userController.methodDelete);
