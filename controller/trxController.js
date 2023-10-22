@@ -54,34 +54,53 @@ const totalPrice = async (dataArray) => {
   return total;
 }
 
+const productCheck = async (dataArray) => {
+  const productIdArray = dataArray.map((item) => item.id_product);
+  const products = await productModel.findAll({
+    where: {
+      id: productIdArray
+    }
+  });
+  if (products.length === dataArray.length) {
+    return true
+  } else {
+    return false
+  }
+}
+
 const methodPost = async (req, res) => {
   try {
     let { customer_name, seat, note, product } = req.body;
     note = note ? note : null;
-    const payment = await totalPrice(product);
-    
-    const todayDate = new Date().toISOString().slice(0, 10);
-    const trx_number = await generateTrxNumber(todayDate);
-    // Simpan data transaksi ke tabel trx
-    const store = await trxModel.create({
-      trx_number,
-      customer_name,
-      seat,
-      note,
-      payment,
-    });
-
-    // Buat array untuk menyimpan data trx_detail
-    const trxDetails = product.map((item) => ({
-      qty: item.qty,
-      id_product: item.id_product,
-      id_trx: store.id,
-    }));
-
-    // Simpan semua data trx_detail sekaligus
-    await trxDetailModel.bulkCreate(trxDetails);
-
-    response.ok(res, true, "Pesanan berhasil dibuat", 201, {trx_number});
+    const isReady = productCheck(product);
+    if (isReady) {
+      const payment = await totalPrice(product);
+      
+      const todayDate = new Date().toISOString().slice(0, 10);
+      const trx_number = await generateTrxNumber(todayDate);
+      // Simpan data transaksi ke tabel trx
+      const store = await trxModel.create({
+        trx_number,
+        customer_name,
+        seat,
+        note,
+        payment,
+      });
+  
+      // Buat array untuk menyimpan data trx_detail
+      const trxDetails = product.map((item) => ({
+        qty: item.qty,
+        id_product: item.id_product,
+        id_trx: store.id,
+      }));
+  
+      // Simpan semua data trx_detail sekaligus
+      await trxDetailModel.bulkCreate(trxDetails);
+  
+      response.ok(res, true, "Pesanan berhasil dibuat", 201, {trx_number});
+    } else {
+      response.ok(res, false, "Menu tidak tersedia", 400)
+    }
   } catch (err) {
     console.error(err)
     response.ok(res, false, "error", 400, err)
