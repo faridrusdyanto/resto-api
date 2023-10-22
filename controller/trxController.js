@@ -72,7 +72,7 @@ const methodPost = async (req, res) => {
   try {
     let { customer_name, seat, note, product } = req.body;
     note = note ? note : null;
-    const isReady = productCheck(product);
+    const isReady = await productCheck(product);
     if (isReady) {
       const payment = await totalPrice(product);
       
